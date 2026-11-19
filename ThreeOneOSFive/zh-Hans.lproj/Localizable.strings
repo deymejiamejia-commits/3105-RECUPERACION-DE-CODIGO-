@@ -667,3 +667,11 @@
 "settings.developer_mode_footer" = "开发者模式会在主导航中添加“文件”。“文件”可以浏览和修改应用容器。";
 "wallpaper.package_details" = "软件包详情";
 "wallpaper.package_files" = "%lld 个文件";
+"patch.path_check.action" = "检查目标路径";
+"patch.path_check.title" = "只读路径检查";
+"patch.path_check.disclaimer" = "可以读取并不代表具有写入权限。即使路径可读，iOS 仍可能阻止应用补丁。";
+"patch.path_check.readable" = "现有文件可读取";
+"patch.path_check.missing" = "文件或文件夹不存在";
+"patch.path_check.inaccessible" = "目标存在，但无法安全读取";
+"patch.path_check.container_unavailable" = "应用容器不可用";
+"patch.path_check.invalid" = "目标路径无效或不安全";
