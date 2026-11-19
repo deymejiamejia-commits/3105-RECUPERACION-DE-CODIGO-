@@ -30,3 +30,16 @@ Las versiones 27.0.1, 27.1, 27.2, 27.2.1 y 27.3 son **objetivos**, no versiones 
 ## Seguridad
 
 No se cambió la detección de versiones para ejecutar código de kernel en compilaciones no verificadas ni se intentó eludir los controles de aislamiento de iOS.
+
+## Recuperación de la superficie Swift desde la IPA
+
+Se volvió a analizar **el ejecutable Mach-O**, no solo el ZIP de los encabezados. En la IPA 2.1 beta6 aparecen **1.875 nombres de símbolos Swift que contienen AirLift**. Entre los métodos visibles están `AirLiftTransport.probe`, `read`, `write`, `installedApplications`, `listEntries` y `AirLiftPatchTransaction.apply`, `restore` y `resetToAppliedState`. La IPA 2.2 conserva referencias y textos AirLift pero **no expone nombres Swift mangled con ese mismo patrón** en su ejecutable; el resultado del extractor es 0. Esto no significa que AirLift no esté presente en 2.2, sino que los símbolos correspondientes no están disponibles con ese método.
+
+Herramienta reproducible (solo lectura):
+
+```bash
+python tools/extract_airlift_symbols.py /ruta/3105-2.1-beta6.ipa --contains 'AirLiftTransportO5write'
+python tools/extract_airlift_symbols.py /ruta/3105-2.1-beta6.ipa --compare /ruta/3105-2.2.ipa
+```
+
+**Límite:** los nombres permiten identificar la estructura y firmas de parte de la API, pero no recuperan los cuerpos originales de las funciones. No habilitan por sí solos el acceso a archivos en iOS 27.
