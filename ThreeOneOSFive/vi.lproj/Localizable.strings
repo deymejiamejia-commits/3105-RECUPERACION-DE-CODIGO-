@@ -667,3 +667,11 @@
 "settings.developer_mode_footer" = "Chế độ nhà phát triển thêm mục Tệp vào thanh điều hướng chính. Tệp có thể duyệt và chỉnh sửa container ứng dụng.";
 "wallpaper.package_details" = "Chi tiết gói";
 "wallpaper.package_files" = "%lld tệp";
+"patch.path_check.action" = "Kiểm tra đường dẫn đích";
+"patch.path_check.title" = "Kiểm tra chỉ đọc";
+"patch.path_check.disclaimer" = "Đọc được không có nghĩa là có quyền ghi. iOS có thể chặn bản vá ngay cả khi đọc được đường dẫn.";
+"patch.path_check.readable" = "Có thể đọc tệp hiện có";
+"patch.path_check.missing" = "Tệp hoặc thư mục không tồn tại";
+"patch.path_check.inaccessible" = "Đích tồn tại nhưng không thể đọc an toàn";
+"patch.path_check.container_unavailable" = "Không thể truy cập vùng dữ liệu ứng dụng";
+"patch.path_check.invalid" = "Đường dẫn đích không hợp lệ hoặc không an toàn";

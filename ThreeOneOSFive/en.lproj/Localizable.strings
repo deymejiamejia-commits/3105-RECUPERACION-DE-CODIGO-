@@ -667,3 +667,11 @@
 "settings.developer_mode_footer" = "Developer Mode adds Files to the main navigation. Files can browse and modify application containers.";
 "wallpaper.package_details" = "Package Details";
 "wallpaper.package_files" = "%lld files";
+"patch.path_check.action" = "Check target paths";
+"patch.path_check.title" = "Read-only path check";
+"patch.path_check.disclaimer" = "Readability does not prove write access. iOS may prevent applying patches even when these paths can be read.";
+"patch.path_check.readable" = "Existing file is readable";
+"patch.path_check.missing" = "File or folder does not exist";
+"patch.path_check.inaccessible" = "Target exists but cannot be read safely";
+"patch.path_check.container_unavailable" = "App container unavailable";
+"patch.path_check.invalid" = "Invalid or unsafe target path";

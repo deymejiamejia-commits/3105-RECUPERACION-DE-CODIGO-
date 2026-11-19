@@ -664,6 +664,8 @@ private struct PatchProjectDetailView: View {
     @State private var showResetConfirmation = false
     @State private var restoreChangedPaths: [String] = []
     @State private var isWorking = false
+    @State private var isCheckingPaths = false
+    @State private var pathChecks: [PatchTargetAccessCheck] = []
     @State private var actionAlert: PatchStoreAlert?
     @State private var shareRequest: PatchShareRequest?
 
@@ -825,8 +827,42 @@ private struct PatchProjectDetailView: View {
                         actionLabel("patch.export", systemImage: "square.and.arrow.up")
                     }
                     .disabled(isWorking)
+
+                    Button {
+                        inspectPaths(project: project)
+                    } label: {
+                        if isCheckingPaths {
+                            ProgressView()
+                        } else {
+                            actionLabel("patch.path_check.action", systemImage: "checkmark.shield")
+                        }
+                    }
+                    .disabled(isWorking || isCheckingPaths)
                 } footer: {
                     Text(language.text("patch.apply_footer"))
+                }
+
+                if !pathChecks.isEmpty {
+                    Section {
+                        ForEach(pathChecks) { check in
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(check.bundleID)
+                                    .font(.subheadline.weight(.medium))
+                                Text(check.relativePath)
+                                    .font(.caption.monospaced())
+                                    .foregroundStyle(.secondary)
+                                    .lineLimit(2)
+                                Text(language.text(check.status.localizationKey))
+                                    .font(.caption)
+                                    .foregroundStyle(check.status == .readable ? Color.green : Color.orange)
+                            }
+                            .padding(.vertical, 3)
+                        }
+                    } header: {
+                        Text(language.text("patch.path_check.title"))
+                    } footer: {
+                        Text(language.text("patch.path_check.disclaimer"))
+                    }
                 }
             }
         }
@@ -1012,6 +1048,18 @@ private struct PatchProjectDetailView: View {
                     isWorking = false
                     actionAlert = PatchStoreAlert(titleKey: "common.failed", messageKey: "patch.error.apply")
                 }
+            }
+        }
+    }
+
+    private func inspectPaths(project: PatchProject) {
+        isCheckingPaths = true
+        pathChecks = []
+        Task.detached(priority: .utility) {
+            let checks = DevicePatchService.inspectPaths(project: project)
+            await MainActor.run {
+                pathChecks = checks
+                isCheckingPaths = false
             }
         }
     }

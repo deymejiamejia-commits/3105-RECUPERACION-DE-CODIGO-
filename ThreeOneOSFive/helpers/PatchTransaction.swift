@@ -399,6 +399,19 @@ enum PatchTransaction {
                         try fileManager.removeItem(at: item.target)
                     }
                 }
+                // Never mark a restore as complete until every target matches
+                // its original contents (or is absent if it was newly created).
+                for item in resolved {
+                    if item.record.originalExisted {
+                        guard let expectedDigest = item.record.originalDigest,
+                              fileManager.fileExists(atPath: item.target.path),
+                              try digestFile(item.target) == expectedDigest else {
+                            throw PatchPackageError.restoreFailed
+                        }
+                    } else if fileManager.fileExists(atPath: item.target.path) {
+                        throw PatchPackageError.restoreFailed
+                    }
+                }
                 journal.status = .restored
                 try writeJournal(journal, to: receipt.journalURL)
             }
@@ -812,6 +825,20 @@ enum PatchTransaction {
                 try atomicCopy(backup, to: target, fileManager: fileManager)
             } else if fileManager.fileExists(atPath: target.path) {
                 try fileManager.removeItem(at: target)
+            }
+        }
+
+        // An interrupted apply must not be recorded as rolled back unless
+        // every original file has actually been restored byte for byte.
+        for (record, target) in resolvedTargets {
+            if record.originalExisted {
+                guard let expectedDigest = record.originalDigest,
+                      fileManager.fileExists(atPath: target.path),
+                      try digestFile(target) == expectedDigest else {
+                    throw PatchPackageError.restoreFailed
+                }
+            } else if fileManager.fileExists(atPath: target.path) {
+                throw PatchPackageError.restoreFailed
             }
         }
 
